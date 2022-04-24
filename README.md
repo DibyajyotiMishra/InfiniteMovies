@@ -1,5 +1,7 @@
 # Infinite Movies
 
+<img src="https://img.shields.io/circleci/build/github/DibyajyotiMishra/InfiniteMovies/develop" alt="build-status" />
+
 - Tools used:
 
   1. React, Redux
