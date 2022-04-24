@@ -2,3 +2,4 @@ node_modules
 .husky
 .circleci
 !.eslintrc.js
+src/internals/*

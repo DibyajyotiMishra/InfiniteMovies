@@ -1,0 +1,22 @@
+import React from "react";
+{{#if wantActionsAndReducer}}
+import { connect } from 'react-redux';
+{{/if}}
+{{#if wantHeaders}}
+import { Helmet } from 'react-helmet';
+{{/if}}
+import "./styles.scss";
+
+const {{pascalCase name}} = () => {
+  return (
+    <div>
+      {{pascalCase name}}
+    </div>
+  );
+};
+
+{{#if wantActionsAndReducer}}
+ // Write Your Map State To Props and Map Dispatch To Props Here
+{{/if}}
+
+export default {{pascalCase name}};

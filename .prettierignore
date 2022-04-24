@@ -1,3 +1,4 @@
 node_modules
 .husky
 .circleci
+src/internals/*
