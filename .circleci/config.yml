@@ -9,8 +9,8 @@ jobs:
       - checkout
       - node/with-cache:
          steps:
-           - npm install
-           - npm test
+           - run: npm install
+           - run: npm test
 workflows:
     build-and-test:
       jobs:
