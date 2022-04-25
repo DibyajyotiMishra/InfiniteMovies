@@ -12,7 +12,7 @@ aliases:
       name: Show current branch
       command: echo ${CIRCLE_BRANCH}
   - &restore-cache
-    restore_cache
+    restore_cache:
       keys:
         - app-{{ checksum "package.json" }}
         - app-
