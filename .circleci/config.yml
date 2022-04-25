@@ -75,6 +75,7 @@ jobs:
   
   deploy-to-aws-cloudfront:
     executor: app-executor
+    steps:
       - checkout
       - *show-current-branch
       - *install-aws-cli
