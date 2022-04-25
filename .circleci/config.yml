@@ -46,7 +46,7 @@ aliases:
 jobs:
   setup:
    executor: app-executor
-    steps:
+   steps:
       - checkout
       - *show-current-branch
       - *restore-cache
