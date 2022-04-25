@@ -15,11 +15,8 @@ jobs:
             - app-{{ checksum "package.json" }}
             - app-
       - run:
-          name: Install Yarn
-          command: sudo npm install -g yarn
-      - run:
           name: Install Dependencies
-          command: yarn install
+          command: npm install
       - save_cache:
           paths:
             - node_modules
