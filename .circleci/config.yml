@@ -14,14 +14,12 @@ jobs:
           keys:
             - app-{{ checksum "package.json" }}
             - app-
-      - node/install-packages:
-            pkg-manager: yarn
-      # - run:
-      #     name: Install Yarn
-      #     command: npm install -g yarn
-      # - run:
-      #     name: Install Dependencies
-      #     command: yarn install
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Install Dependencies
+          command: yarn install
       - save_cache:
           paths:
             - node_modules
