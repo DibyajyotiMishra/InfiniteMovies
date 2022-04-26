@@ -158,6 +158,7 @@ workflows:
       - deploy-to-aws-s3:
           requires:
             - prettify
+            - linting
           filters:
             branches:
               only:
