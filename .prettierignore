@@ -2,3 +2,5 @@ node_modules
 .husky
 .circleci
 src/internals/*
+public/*
+src/index.tsx
