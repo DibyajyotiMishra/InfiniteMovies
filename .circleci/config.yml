@@ -63,6 +63,16 @@ jobs:
           name: Run Linting
           command: npm run lint
 
+  prettify:
+    executor: app-executor
+    steps: 
+      - checkout
+      - *show-current-branch
+      - *restore-cache
+      - run:
+          name: Run Prettier
+          command: npm run prettify  
+
   deploy-to-heroku:
     executor: app-executor
     steps:
@@ -129,16 +139,25 @@ workflows:
                 - develop
                 - staging
                 - master
+      - prettify:
+          requires:
+            - setup
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
       - deploy-to-heroku:
           requires:
-            - linting
+            - prettify
           filters:
             branches:
               only:
                 - develop
       - deploy-to-aws-s3:
           requires:
-            - linting
+            - prettify
           filters:
             branches:
               only:

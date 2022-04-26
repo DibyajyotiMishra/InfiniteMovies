@@ -25,9 +25,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/app/*.{js,jsx,ts,tsx}'",
-    "prettier": "prettier src -check",
+    "prettify": "prettier src --check 'src/app/*.{js,jsx,ts,tsx,json}'",
+    "format": "prettier --write 'src/app/*.{js,jsx,ts,tsx,json}'",
     "prepare": "husky install",
-    "format": "prettier --write .",
     "generate": "plop --plopfile src/internals/generators/index.js",
     "preinstall": "npm run npmcheckversion",
     "npmcheckversion": "node ./src/internals/scripts/npmcheckversion.js"
