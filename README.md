@@ -11,5 +11,6 @@
 3. Docker
 4. Sentry
 5. CircleCI
+6. Heroku (For deploying the develop branch)
 
 - Status: Work In Progress
