@@ -2,7 +2,7 @@
 
 <p align="left"> 
 <img src="https://img.shields.io/circleci/build/github/DibyajyotiMishra/InfiniteMovies/develop" alt="build-status" />
-<img src="https://img.shields.io/badge/branch-staging-%23F4BE2C" alt="current-branch" />
+<img src="https://img.shields.io/badge/branch-develop-%23F4BE2C" alt="current-branch" />
 </p>
 - Tools used:
 
