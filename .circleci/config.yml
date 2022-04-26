@@ -62,7 +62,7 @@ jobs:
           name: Deploy to Heruko
           command: |
             if [ "${CIRCLE_BRANCH}" == "develop" ]
-            then git push https://heroku:$HEROKU_API_KEY@git.heroku.com/${HEROKU_DEV_APP}.git ${"CIRCLE_BRANCH"}
+            then git push https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_DEV_APP}.git ${"CIRCLE_BRANCH"}
             fi  
   
   deploy-to-aws-s3:
