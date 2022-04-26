@@ -151,6 +151,7 @@ workflows:
       - deploy-to-heroku:
           requires:
             - prettify
+            - linting
           filters:
             branches:
               only:
