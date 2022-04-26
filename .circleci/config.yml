@@ -101,8 +101,6 @@ jobs:
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_STAGING_BUCKET} --delete
-            # else
-            #   aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_DEV_BUCKET} --delete
             fi
   
   deploy-to-aws-cloudfront:
@@ -122,8 +120,6 @@ jobs:
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then 
               aws cloudfront create-invalidation --distribution-id ${STAG_DISTRIBUTION_ID} --path /\*
-            # else
-            #   aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION_ID} --path /\*
             fi
 
 workflows:
