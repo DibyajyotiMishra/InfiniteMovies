@@ -1,16 +1,178 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+
+executors:
+  app-executor:
+    docker:
+      - image: circleci/node:14.18.1
+    working_directory: ~/repo
+
+aliases:
+  - &show-current-branch
+    run:
+      name: Show current branch
+      command: echo ${CIRCLE_BRANCH}
+  - &restore-cache
+    restore_cache:
+      keys:
+        - app-{{ checksum "package.json" }}
+        - app-
+  - &install-dependencies
+    run:
+      name: Install Dependencies
+      command: npm install
+  - &save-cache
+    save_cache:
+      paths:
+        - node_modules
+      key: app-{{ checksum "package.json" }}
+  - &install-aws-cli
+    run:
+      name: Installing AWS CLI
+      working_directory: /
+      command: |
+        sudo apt-get -y -qq update
+        sudo apt-get -y install awscli
+        sudo apt-get install -y python-pip python-dev build-essential
+  - &build-project
+    run:
+      name: Build Project
+      command: |
+        npm install
+        npm run build
+        cd build
+        zip ../build.zip -r * .[^.]*
+        echo "Build Successful !"
+ 
 jobs:
-  build:
-    executor:
-      name: node/default
+  setup:
+   executor: app-executor
+   steps:
+      - checkout
+      - *show-current-branch
+      - *restore-cache
+      - *install-dependencies
+      - *save-cache
+
+  linting:
+    executor: app-executor
     steps:
       - checkout
-      - node/with-cache:
-         steps:
-           - run: npm install
+      - *show-current-branch
+      - *restore-cache
+      - run:
+          name: Run Linting
+          command: npm run lint
+
+  prettify:
+    executor: app-executor
+    steps: 
+      - checkout
+      - *show-current-branch
+      - *restore-cache
+      - run:
+          name: Run Prettier
+          command: npm run prettify  
+
+  deploy-to-heroku:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      - run:
+          name: Deploy to Heruko
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "develop" ]
+            then git push https://heroku:$HEROKU_API_KEY@git.heroku.com/${HEROKU_DEV_APP}.git ${CIRCLE_BRANCH}
+            fi  
+  
+  deploy-to-aws-s3:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      - *install-aws-cli
+      - *build-project
+      - run:
+          name: Deploy to AWS S3
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then 
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_PRODUCTION_BUCKET} --delete
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]
+            then 
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_STAGING_BUCKET} --delete
+            # else
+            #   aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_DEV_BUCKET} --delete
+            fi
+  
+  deploy-to-aws-cloudfront:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      - *install-aws-cli
+      - *build-project
+      - run:
+          name: Deploy to AWS CloudFront
+          command: |
+            aws configure set preview.cloudfront true
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then 
+              aws cloudfront create-invalidation --distribution-id ${PROD_DISTRIBUTION_ID} --path /\*
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]
+            then 
+              aws cloudfront create-invalidation --distribution-id ${STAG_DISTRIBUTION_ID} --path /\*
+            # else
+            #   aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION_ID} --path /\*
+            fi
+
 workflows:
-    build:
-      jobs:
-        - build
+  build_and_deploy:
+    jobs:
+      - setup
+      - linting:
+          requires:
+            - setup
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - prettify:
+          requires:
+            - setup
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - deploy-to-heroku:
+          requires:
+            - prettify
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
+      - deploy-to-aws-s3:
+          requires:
+            - prettify
+            - linting
+          filters:
+            branches:
+              only:
+                # - develop
+                - staging
+                - master
+      - deploy-to-aws-cloudfront:
+          requires:
+            - deploy-to-aws-s3
+          filters:
+            branches:
+              only:
+                # - develop
+                - staging
+                - master
+
