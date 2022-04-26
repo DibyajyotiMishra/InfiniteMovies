@@ -24,7 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src --color",
+    "lint": "eslint 'src/app/*.{js,jsx,ts,tsx}'",
     "prettier": "prettier src -check",
     "prepare": "husky install",
     "format": "prettier --write .",

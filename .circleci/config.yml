@@ -53,6 +53,16 @@ jobs:
       - *install-dependencies
       - *save-cache
 
+  linting:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      - *restore-cache
+      - run:
+          name: Run Linting
+          command: npm run lint
+
   deploy-to-heroku:
     executor: app-executor
     steps:
@@ -110,16 +120,25 @@ workflows:
   build_and_deploy:
     jobs:
       - setup
-      - deploy-to-heroku:
+      - linting:
           requires:
             - setup
           filters:
             branches:
               only:
                 - develop
+                - staging
+                - master
+      - deploy-to-heroku:
+          requires:
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
       - deploy-to-aws-s3:
           requires:
-            - setup
+            - linting
           filters:
             branches:
               only:
