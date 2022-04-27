@@ -153,18 +153,18 @@ jobs:
                     "type": "plain_text",
                     "text": "Hurray 🎉 !!! Deployed ${CIRCLE_BRANCH} on servers!",
                     "emoji": true
-                  },
+                  }
                 },
                 {
                   "type": "section",
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
+                      "text": "*Project:*\n$CIRCLE_PROJECT_REPONAME"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                      "text": "*Branch:*\n$CIRCLE_BRANCH"
                     },
                     {
                       "type": "mrkdwn",
@@ -172,12 +172,12 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Build Number:*\n${CIRCLE_BUILD_NUM}"
+                      "text": "*Build Number:*\n$CIRCLE_BUILD_NUM"
                     }
                     ,
                     {
                       "type": "mrkdwn",
-                      "text": "*Author:*\n${CIRCLE_PROJECT_USERNAME}"
+                      "text": "*Author:*\n$CIRCLE_PROJECT_USERNAME"
                     }
                   ]
                 },
