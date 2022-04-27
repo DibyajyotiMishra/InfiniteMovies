@@ -1,3 +1,6 @@
+orbs: 
+  slack: circleci/slack@4.9.3
+
 version: 2.1
 
 executors:
@@ -5,6 +8,11 @@ executors:
     docker:
       - image: circleci/node:14.18.1
     working_directory: ~/repo
+  
+  slack-executor:
+    docker:
+      image: 'cibuilds/base:latest'
+    resource_class: small
 
 aliases:
   - &show-current-branch
@@ -44,6 +52,12 @@ aliases:
         echo "Build Successful !"
  
 jobs:
+
+  test:
+    executor: app-executor
+    steps:
+      - run: echo "Testing Slack Notification"
+
   setup:
    executor: app-executor
    steps:
@@ -121,54 +135,136 @@ jobs:
             then 
               aws cloudfront create-invalidation --distribution-id ${STAG_DISTRIBUTION_ID} --path /\*
             fi
+  
+  send-notification:
+    executor: slack-executor
+    steps:
+      - run: echo "Sending Notification to Slack Channel"
+      - slack/notify:
+          event: 'always'
+          channel: '${SLACK_CHANNNEL}'
+          template: ''
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Hurray 🎉 !!! Deployed ${CIRCLE_BRANCH} on servers!",
+                    "emoji": true
+                  },
+                },
+                {
+                  type: "section",
+                  fields: [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${CIRCLE_BRANCH}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Deployed at:*\n$(date + '%d/%m/%Y %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Build Number:*\n${CIRCLE_BUILD_NUM}"
+                    }
+                    ,
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${CIRCLE_PROJECT_USERNAME}"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "view job",  
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]  
+            }
+
+
 
 workflows:
   build_and_deploy:
     jobs:
-      - setup
-      - linting:
+      - test
+      - send-notification:
           requires:
-            - setup
+            - test
           filters:
             branches:
               only:
-                - develop
+                - develop               
                 - staging
                 - master
-      - prettify:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - master
-      - deploy-to-heroku:
-          requires:
-            - prettify
-            - linting
-          filters:
-            branches:
-              only:
-                - develop
-      - deploy-to-aws-s3:
-          requires:
-            - prettify
-            - linting
-          filters:
-            branches:
-              only:
-                # - develop
-                - staging
-                - master
-      - deploy-to-aws-cloudfront:
-          requires:
-            - deploy-to-aws-s3
-          filters:
-            branches:
-              only:
-                # - develop
-                - staging
-                - master
+      # - setup
+      # - linting:
+      #     requires:
+      #       - setup
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - prettify:
+      #     requires:
+      #       - setup
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - deploy-to-heroku:
+      #     requires:
+      #       - prettify
+      #       - linting
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      # - deploy-to-aws-s3:
+      #     requires:
+      #       - prettify
+      #       - linting
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - master
+      # - deploy-to-aws-cloudfront:
+      #     requires:
+      #       - deploy-to-aws-s3
+      #     filters:
+      #       branches:
+      #         only: 
+      #           - develop              
+      #           - staging
+      #           - master
+      # - send-notification:
+      #     requires:
+      #       - deploy-to-aws-cloudfront
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop               
+      #           - staging
+      #           - master
 
