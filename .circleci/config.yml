@@ -12,7 +12,6 @@ executors:
   slack-executor:
     docker:
       - image: 'cimg/base:stable'
-    # resource_class: small
 
 aliases:
   - &show-current-branch
@@ -52,12 +51,6 @@ aliases:
         echo "Build Successful !"
  
 jobs:
-
-  test:
-    executor: app-executor
-    steps:
-      - run: echo "Testing Slack Notification"
-
   setup:
    executor: app-executor
    steps:
@@ -201,69 +194,59 @@ jobs:
 workflows:
   build_and_deploy:
     jobs:
-      - test
+      - setup
+      - linting:
+          requires:
+            - setup
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - prettify:
+          requires:
+            - setup
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - deploy-to-heroku:
+          requires:
+            - prettify
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
+      - deploy-to-aws-s3:
+          requires:
+            - prettify
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - deploy-to-aws-cloudfront:
+          requires:
+            - deploy-to-aws-s3
+          filters:
+            branches:
+              only: 
+                - develop              
+                - staging
+                - master
       - send-notification:
           requires:
-            - test
+            - deploy-to-aws-cloudfront
           filters:
             branches:
               only:
                 - develop               
                 - staging
                 - master
-      # - setup
-      # - linting:
-      #     requires:
-      #       - setup
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - master
-      # - prettify:
-      #     requires:
-      #       - setup
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - master
-      # - deploy-to-heroku:
-      #     requires:
-      #       - prettify
-      #       - linting
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      # - deploy-to-aws-s3:
-      #     requires:
-      #       - prettify
-      #       - linting
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - master
-      # - deploy-to-aws-cloudfront:
-      #     requires:
-      #       - deploy-to-aws-s3
-      #     filters:
-      #       branches:
-      #         only: 
-      #           - develop              
-      #           - staging
-      #           - master
-      # - send-notification:
-      #     requires:
-      #       - deploy-to-aws-cloudfront
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop               
-      #           - staging
-      #           - master
 
