@@ -189,7 +189,7 @@ jobs:
                         "type": "plain_text",
                         "text": "view job",  
                       },
-                      "url": "${CIRCLE_BUILD_URL}"
+                      "url": "$CIRCLE_BUILD_URL"
                     }
                   ]
                 }
