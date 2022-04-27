@@ -183,6 +183,14 @@ jobs:
                         "text": "View Job"  
                       },
                       "url": "${CIRCLE_BUILD_URL}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Project"  
+                      },
+                      "url": "https://github.com/DibyajyotiMishra/InfiniteMovies"
                     }
                   ]
                 }
