@@ -173,8 +173,7 @@ jobs:
                     {
                       "type": "mrkdwn",
                       "text": "*Build Number:*\n$CIRCLE_BUILD_NUM"
-                    }
-                    ,
+                    },
                     {
                       "type": "mrkdwn",
                       "text": "*Author:*\n$CIRCLE_PROJECT_USERNAME"
