@@ -12,7 +12,7 @@ executors:
   slack-executor:
     docker:
       - image: 'cimg/base:stable'
-    resource_class: small
+    # resource_class: small
 
 aliases:
   - &show-current-branch
