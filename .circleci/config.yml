@@ -142,7 +142,7 @@ jobs:
       - run: echo "Sending Notification to Slack Channel"
       - slack/notify:
           event: 'always'
-          channel: '${SLACK_CHANNNEL}'
+          channel: 'infinite-movies'
           template: ''
           custom: |
             {
