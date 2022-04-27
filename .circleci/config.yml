@@ -168,7 +168,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Deployed at:*\n$(date + '%d/%m/%Y %T')"
+                      "text": "*Deployed at:*\n$(date +'%m/%d/%Y %T')"
                     },
                     {
                       "type": "mrkdwn",
