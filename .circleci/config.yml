@@ -11,7 +11,7 @@ executors:
   
   slack-executor:
     docker:
-      image: 'cibuilds/base:latest'
+      - image: 'cibuilds/base:latest'
     resource_class: small
 
 aliases:
@@ -156,8 +156,8 @@ jobs:
                   },
                 },
                 {
-                  type: "section",
-                  fields: [
+                  "type": "section",
+                  "fields": [
                     {
                       "type": "mrkdwn",
                       "text": "*Project:*\n${CIRCLE_PROJECT_REPONAME}"
