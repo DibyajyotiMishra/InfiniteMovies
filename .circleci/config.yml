@@ -172,7 +172,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Build No.:*\n$CIRCLE_BUILD_NUM"
+                      "text": "*Build Number:*\n$CIRCLE_BUILD_NUM"
                     },
                     {
                       "type": "mrkdwn",
