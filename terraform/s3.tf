@@ -4,10 +4,7 @@
 
 resource "aws_s3_bucket" "infinite-mvies-terraform-bucket" {
   bucket        = local.prefix
-  acl           = "public-read"
   force_destroy = true
-
-  # Inline policy
 
   policy = <<EOF
 {
@@ -25,8 +22,6 @@ resource "aws_s3_bucket" "infinite-mvies-terraform-bucket" {
   ]
 }
 EOF
-
-  # ---------------------------------------------------------------------
 
   tags = local.common_tags
 }
@@ -49,24 +44,9 @@ resource "aws_s3_bucket_website_configuration" "infinite-mvies-terraform-bucket"
     key = "index.html"
   }
 }
-# Seperate Resource
 
-# resource "aws_s3_bucket_policy" "infinite-mvies-terraform-bucket-policy" {
-#   bucket = aws_s3_bucket.infinite-movies-s3-bucket.id
-#   policy = <<POLICY
-#     {
-#         "Version": "2012-10-17",
-#           "Statement": [
-#               {
-#                   "Sid": "PublicReadGetObject",
-#                   "Action": [
-#                       "s3:GetObject"
-#                   ],
-#                   "Effect": "Allow",
-#                   "Resource": "arn:aws:s3:::${local.prefix}/*"
-#                   "Principal": "*"
-#               }
-#           ]
-#     }
-#     POLICY
-# }
+resource "aws_s3_bucket_acl" "infinite-mvies-terraform-bucket" {
+  bucket = local.prefix
+  acl    = "public-read"
+}
+
