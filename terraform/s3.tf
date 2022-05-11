@@ -47,7 +47,7 @@ resource "aws_s3_bucket_policy" "infinite-mvies-terraform-bucket-policy" {
                       "s3:GetObject"
                   ],
                   "Effect": "Allow",
-                  "Resource": "arn:aws:s3:::${local.prefix}/*"
+                  "Resource": "arn:aws:s3:::${local.prefix}/*",
                   "Principal": "*"
               }
           ]
