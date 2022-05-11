@@ -63,6 +63,13 @@ jobs:
       - *restore-cache
       - *install-dependencies
       - *save-cache
+      - run:
+          name: Copy Terraform folder
+          command: cp -r terraform artifacts/terraform/
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
 
   linting:
     executor: app-executor
