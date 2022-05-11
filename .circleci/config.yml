@@ -312,14 +312,6 @@ workflows:
                 - develop
                 - staging
                 - master
-      - deploy-to-heroku:
-          requires:
-            - prettify
-            - linting
-          filters:
-            branches:
-              only:
-                - develop
       - deploy-to-aws-s3:
           requires:
             - terraform-plan-and-apply
