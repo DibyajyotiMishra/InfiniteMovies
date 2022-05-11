@@ -33,13 +33,19 @@ EOF
     error_document = "index.html"
   }
 
-  versioning {
-    enabled = true
-  }
+  # versioning {
+  #   enabled = true
+  # }
 
   tags = local.common_tags
 }
 
+resource "aws_s3_bucket_versioning" "infinite-mvies-terraform-bucket" {
+  bucket = local.prefix
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 # Seperate Resource
 
 # resource "aws_s3_bucket_policy" "infinite-mvies-terraform-bucket-policy" {
