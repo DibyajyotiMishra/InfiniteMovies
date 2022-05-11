@@ -27,6 +27,7 @@ resource "aws_s3_bucket_website_configuration" "infinite-mvies-terraform-bucket"
   }
 }
 
+
 resource "aws_s3_bucket_acl" "infinite-mvies-terraform-bucket" {
   bucket = local.prefix
   acl    = "public-read"
