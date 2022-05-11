@@ -28,15 +28,6 @@ EOF
 
   # ---------------------------------------------------------------------
 
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
-  }
-
-  # versioning {
-  #   enabled = true
-  # }
-
   tags = local.common_tags
 }
 
@@ -44,6 +35,18 @@ resource "aws_s3_bucket_versioning" "infinite-mvies-terraform-bucket" {
   bucket = local.prefix
   versioning_configuration {
     status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "infinite-mvies-terraform-bucket" {
+  bucket = local.prefix
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
   }
 }
 # Seperate Resource
