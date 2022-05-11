@@ -35,7 +35,7 @@ resource "aws_s3_bucket_acl" "infinite-mvies-terraform-bucket" {
 # Seperate Resource
 
 resource "aws_s3_bucket_policy" "infinite-mvies-terraform-bucket-policy" {
-  bucket = aws_s3_bucket.infinite-movies-s3-bucket.id
+  bucket = local.prefix
   policy = <<POLICY
     {
         "Version": "2012-10-17",
