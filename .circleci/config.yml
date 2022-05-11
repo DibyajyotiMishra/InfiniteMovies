@@ -12,6 +12,10 @@ executors:
   slack-executor:
     docker:
       - image: 'cimg/base:stable'
+  
+  terraform-executor: 
+    docker:
+      - image: hashicorp/terraform:latest
 
 aliases:
   - &show-current-branch
@@ -78,7 +82,47 @@ jobs:
       - *restore-cache
       - run:
           name: Run Prettier
-          command: npm run prettify  
+          command: npm run prettify 
+
+  terraform-validate:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      -  run:
+          name: Terraform Validate and Format
+          command: |
+             cd terraform/
+             terraform init -backend=false
+             terraform validate
+             terraform fmt -check
+  
+  terraform-plan-and-apply:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - *show-current-branch
+      -  run:
+          name: Terraform Plan
+          command: |
+             cd artifacts/terraform/
+             terraform init
+             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
+             terraform plan
+      -  run:
+          name: Terraform Apply
+          command: |
+             cd artifacts/terraform/
+             terraform workspace select ${CIRCLE_BRANCH}
+             terraform apply --auto-approve 
+             terraform output infinite-movies-bucket-name > ../infinite-movies-bucket-name.txt
+             terraform output cloudfront-distribution-id > ../cloudfront-distribution-id.txt
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts 
 
   deploy-to-heroku:
     executor: app-executor
@@ -96,37 +140,45 @@ jobs:
     executor: app-executor
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - *show-current-branch
       - *install-aws-cli
       - *build-project
       - run:
           name: Deploy to AWS S3
           command: |
+            AWS_BUCKET_NAME = $(cat artifacts/infinite-movies-bucket-name | sed 's/\"//g')
+            echo AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_PRODUCTION_BUCKET} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then 
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_STAGING_BUCKET} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             fi
   
   deploy-to-aws-cloudfront:
     executor: app-executor
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - *show-current-branch
       - *install-aws-cli
       - *build-project
       - run:
           name: Deploy to AWS CloudFront
           command: |
+            AWS_CLOUDFRONT_DISTRIBUTION_ID = $(cat artifacts/infinite-movies-bucket-name | sed 's/\"//g')
+            echo AWS_CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
-              aws cloudfront create-invalidation --distribution-id ${PROD_DISTRIBUTION_ID} --path /\*
+              aws cloudfront create-invalidation --distribution-id ${AWS_CLOUDFRONT_DISTRIBUTION_ID} --path /\*
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then 
-              aws cloudfront create-invalidation --distribution-id ${STAG_DISTRIBUTION_ID} --path /\*
+              aws cloudfront create-invalidation --distribution-id ${AWS_CLOUDFRONT_DISTRIBUTION_ID} --path /\*
             fi
   
   send-notification:
@@ -197,8 +249,19 @@ jobs:
               ]  
             }
 
-
-
+  terraform-destroy:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch
+      - run: 
+          name: Terraform Destroy
+          command: |
+            cd artifacts/terraform/
+            terraform init
+            terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH} 
+            terraform destroy --auto-approve
+ 
 workflows:
   build_and_deploy:
     jobs:
@@ -221,6 +284,25 @@ workflows:
                 - develop
                 - staging
                 - master
+      - terraform-validate:
+          requires:
+            - linting
+            - prettify
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
+      - terraform-plan-and-apply:
+          requires:
+            - terraform-validate
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - master
       - deploy-to-heroku:
           requires:
             - prettify
@@ -231,8 +313,7 @@ workflows:
                 - develop
       - deploy-to-aws-s3:
           requires:
-            - prettify
-            - linting
+            - terraform-plan-and-apply
           filters:
             branches:
               only:
@@ -255,6 +336,21 @@ workflows:
             branches:
               only:
                 - develop               
+                - staging
+                - master
+
+      - hold:
+          type: approval
+          requires:
+            - send-notification
+
+      - terraform-destroy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - develop
                 - staging
                 - master
 
