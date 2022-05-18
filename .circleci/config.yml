@@ -156,8 +156,8 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            cd artifacts
-            ls
+            # cd artifacts
+            # ls
             cat artifacts/infinite-mvies-bucket-name.txt 
             AWS_BUCKET_NAME=$(cat artifacts/infinite-mvies-bucket-name.txt | sed 's/\"//g')
             echo $AWS_BUCKET_NAME
