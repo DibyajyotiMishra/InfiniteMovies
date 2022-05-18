@@ -156,6 +156,7 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
+            ls 
             AWS_BUCKET_NAME = $(cat artifacts/infinite-movies-bucket-name.txt | sed 's/\"//g')
             echo ${AWS_BUCKET_NAME}
             if [ "${CIRCLE_BRANCH}" == "master" ]
