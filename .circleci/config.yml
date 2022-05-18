@@ -125,7 +125,7 @@ jobs:
              cd artifacts/terraform/
              terraform workspace select ${CIRCLE_BRANCH}
              terraform apply --auto-approve 
-             terraform output infinite-movies-bucket-name > ../infinite-movies-bucket-name.txt
+             terraform output infinite-mvies-bucket-name > ../infinite-mvies-bucket-name.txt
              terraform output cloudfront-distribution-id > ../cloudfront-distribution-id.txt
       - persist_to_workspace:
           root: ./
@@ -158,7 +158,7 @@ jobs:
           command: |
             cd artifacts
             ls 
-            AWS_BUCKET_NAME = $(cat artifacts/infinite-movies-bucket-name.txt | sed 's/\"//g')
+            AWS_BUCKET_NAME = $(cat artifacts/infinite-mvies-bucket-name.txt | sed 's/\"//g')
             echo ${AWS_BUCKET_NAME}
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
@@ -180,7 +180,7 @@ jobs:
       - run:
           name: Deploy to AWS CloudFront
           command: |
-            AWS_CLOUDFRONT_DISTRIBUTION_ID = $(cat artifacts/infinite-movies-bucket-name | sed 's/\"//g')
+            AWS_CLOUDFRONT_DISTRIBUTION_ID = $(cat artifacts/infinite-mvies-bucket-name | sed 's/\"//g')
             echo $AWS_CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
