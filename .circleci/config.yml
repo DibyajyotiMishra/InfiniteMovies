@@ -156,8 +156,8 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            AWS_BUCKET_NAME = $(cat artifacts/infinite-movies-bucket-name | sed 's/\"//g')
-            echo $AWS_BUCKET_NAME
+            AWS_BUCKET_NAME = $(cat artifacts/infinite-movies-bucket-name.txt | sed 's/\"//g')
+            echo ${AWS_BUCKET_NAME}
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
