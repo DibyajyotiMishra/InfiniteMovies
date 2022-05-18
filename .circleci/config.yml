@@ -178,7 +178,6 @@ jobs:
       - run:
           name: Deploy to AWS CloudFront
           command: |
-            cat artifacts/cloudfront-distribution-id.txt
             AWS_CLOUDFRONT_DISTRIBUTION_ID=$(cat artifacts/cloudfront-distribution-id.txt | sed 's/\"//g')
             echo $AWS_CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
