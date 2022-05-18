@@ -125,7 +125,7 @@ jobs:
              cd artifacts/terraform/
              terraform workspace select ${CIRCLE_BRANCH}
              terraform apply --auto-approve 
-             terraform output infinite-mvies-bucket-name > ../infinite-mvies-bucket-name.txt
+             terraform output infinite-movies-bucket-name > ../infinite-mvies-bucket-name.txt
              terraform output cloudfront-distribution-id > ../cloudfront-distribution-id.txt
       - persist_to_workspace:
           root: ./
@@ -159,7 +159,7 @@ jobs:
             cd artifacts
             ls 
             AWS_BUCKET_NAME = $(cat artifacts/infinite-mvies-bucket-name.txt | sed 's/\"//g')
-            echo ${AWS_BUCKET_NAME}
+            echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then 
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
