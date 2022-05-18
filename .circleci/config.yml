@@ -155,10 +155,7 @@ jobs:
       - *build-project
       - run:
           name: Deploy to AWS S3
-          command: |
-            # cd artifacts
-            # ls
-            cat artifacts/infinite-mvies-bucket-name.txt 
+          command: | 
             AWS_BUCKET_NAME=$(cat artifacts/infinite-mvies-bucket-name.txt | sed 's/\"//g')
             echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
@@ -181,7 +178,7 @@ jobs:
       - run:
           name: Deploy to AWS CloudFront
           command: |
-            AWS_CLOUDFRONT_DISTRIBUTION_ID = $(cat artifacts/cloudfront_distribution_id.txt | sed 's/\"//g')
+            AWS_CLOUDFRONT_DISTRIBUTION_ID = $(cat artifacts/cloudfront-distribution-id.txt | sed 's/\"//g')
             echo $AWS_CLOUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
