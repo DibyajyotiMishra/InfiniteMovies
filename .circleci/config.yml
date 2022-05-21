@@ -194,7 +194,7 @@ jobs:
     steps:
       - run: echo "Sending Notification to Slack Channel"
       - slack/notify:
-          event: 'always'
+          event: 'pass'
           channel: 'infinite-movies'
           template: ''
           custom: |
@@ -256,6 +256,10 @@ jobs:
                 }
               ]  
             }
+      - slack/notify:
+          event: fail
+          mentions: '@dibyajyotimishra14'
+          template: basic_fail_1
 
   terraform-destroy:
     executor: terraform-executor
