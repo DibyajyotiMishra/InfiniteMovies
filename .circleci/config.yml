@@ -340,6 +340,8 @@ workflows:
                 - master
 
       - terraform-destroy:
+          requires:
+            - send-notification
           filters:
             branches:
               only:
