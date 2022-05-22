@@ -257,7 +257,7 @@ jobs:
               ]  
             }
       - slack/notify:
-          event: fail
+          event: 'fail'
           mentions: '@dibyajyotimishra14'
           template: basic_fail_1
 
