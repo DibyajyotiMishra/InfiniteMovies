@@ -343,9 +343,14 @@ workflows:
                 - staging
                 - master
 
-      - terraform-destroy:
+      - hold:
+          type: approval
           requires:
             - send-notification
+
+      - terraform-destroy:
+          requires:
+            - hold
           filters:
             branches:
               only:
