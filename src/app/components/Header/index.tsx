@@ -5,6 +5,33 @@ import React, {useState} from 'react';
 import logo from '../../assets/movies.svg';
 import './styles.scss';
 
+const headerList = [
+  {
+    id: 1,
+    iconClass: 'fas fa-film',
+    name: 'Now Playing',
+    type: 'now_playing',
+  },
+  {
+    id: 2,
+    iconClass: 'fas fa-fire',
+    name: 'Trending',
+    type: 'trending',
+  },
+  {
+    id: 3,
+    iconClass: 'fas fa-star',
+    name: 'Top Rated',
+    type: 'top_rated',
+  },
+  {
+    id: 4,
+    iconClass: 'fas fa-plus-square',
+    name: 'Upcoming',
+    type: 'upcoming',
+  },
+];
+
 function Header() {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
@@ -38,8 +65,15 @@ function Header() {
           <span className="bar" />
         </div>
         <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
-          <li className="header-nav-item">Now Playing</li>
-          <li className="header-nav-item">Recent Releases</li>
+          {headerList.map(item => (
+            <li key={item.id} className="header-nav-item">
+              <span className="header-list-name">
+                <i className={item.iconClass} />
+              </span>
+              &nbsp;
+              <span className="header-list-name">{item.name}</span>
+            </li>
+          ))}
           <input type="text" className="search-input" placeholder="Search for movies" />
         </ul>
       </div>
