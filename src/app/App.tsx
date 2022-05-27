@@ -5,6 +5,7 @@ function App() {
     <div>
       <Header />
       <h2>App Component</h2>
+      {/* <PaginateComponent /> */}
     </div>
   );
 }

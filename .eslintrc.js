@@ -4,19 +4,11 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'airbnb',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'airbnb', 'prettier'],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   rules: {
-    'react/jsx-filename-extension': [
-      2,
-      {extensions: ['.js', '.jsx', '.ts', '.tsx']},
-    ],
+    'react/jsx-filename-extension': [2, {extensions: ['.js', '.jsx', '.ts', '.tsx']}],
     'no-const-assign': 2,
     'no-dupe-args': 2,
     'no-dupe-class-members': 1,
@@ -61,12 +53,10 @@ module.exports = {
     'react/require-default-props': 0,
     'import/no-unresolved': 0,
     'import/extensions': 0,
-    'react/function-component-definition': [
-      2,
-      {
-        namedComponents: 'function-declaration',
-      },
-    ],
+    'react/function-component-definition': 0,
+    'arrow-body-style': 0,
+    'no-bitwise': 0,
+    'react/button-has-type': 0,
   },
   overrides: [
     {
