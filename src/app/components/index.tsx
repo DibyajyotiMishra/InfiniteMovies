@@ -1,11 +1,13 @@
 // COMPONENT IMPORTS
-import Carousel from './Carousel';
+import PaginateComponent from './PaginateComponent';
 import Header from './Header';
 import Button from './Button';
+import Carousel from './Carousel';
 
 export {
   // COMPONENT EXPORTS
-  Carousel,
+  PaginateComponent,
   Header,
   Button,
+  Carousel,
 };
