@@ -1,11 +1,11 @@
 import React from 'react';
 import {Header} from './components';
+import HomePage from './pages/HomePage';
 function App() {
   return (
     <div>
       <Header />
-      <h2>App Component</h2>
-      {/* <PaginateComponent /> */}
+      <HomePage />
     </div>
   );
 }

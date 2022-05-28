@@ -17,7 +17,7 @@
 
 .disable {
   cursor: not-allowed;
-  pointer-events: painted;
+  pointer-events: none;
   background-color: rgb(216, 216, 216);
   color: rgb(151, 151, 151);
 
