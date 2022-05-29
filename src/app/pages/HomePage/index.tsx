@@ -1,6 +1,6 @@
 import React from 'react';
 import {Helmet} from 'react-helmet';
-import {Carousel} from '../../components';
+import {Carousel, Gallery} from '../../components';
 import './styles.scss';
 
 function HomePage() {
@@ -10,7 +10,7 @@ function HomePage() {
         <title>Infinite Movies</title>
       </Helmet>
       <Carousel />
-      <h2>Welcome to Infinite Movies</h2>
+      <Gallery />
     </div>
   );
 }
