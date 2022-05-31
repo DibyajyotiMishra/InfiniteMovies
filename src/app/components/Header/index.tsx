@@ -1,8 +1,12 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prefer-const */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
 import logo from '../../assets/movies.svg';
+import {fetchMovies} from '../../redux/actions/movies.action';
+import IStoreState from '../../redux/StoreTypes';
 import './styles.scss';
 
 const headerList = [
@@ -32,9 +36,18 @@ const headerList = [
   },
 ];
 
-function Header() {
+interface Props {
+  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') => void;
+  movies: any;
+}
+
+function Header({getMovies, movies}: Props) {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
+
+  useEffect(() => {
+    getMovies(1, 'now_playing');
+  }, []);
 
   const toggleMenu = () => {
     navClass = !navClass;
@@ -47,6 +60,8 @@ function Header() {
       document.body.classList.remove('header-nav-open');
     }
   };
+
+  console.log('movies : ', movies);
 
   return (
     <div className="header-nav-wrapper">
@@ -81,4 +96,13 @@ function Header() {
   );
 }
 
-export default Header;
+const mapStateToProps = (state: IStoreState) => ({
+  movies: state.movies,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') =>
+    dispatch(fetchMovies(page, type)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
