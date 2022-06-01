@@ -1,16 +1,29 @@
 import React, {useState} from 'react';
+import {connect} from 'react-redux';
+import IStoreState from '../../redux/StoreTypes';
 import PaginateComponent from '../PaginateComponent';
 import Slider from './slider';
 import './styles.scss';
 
-function Carousel() {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+interface Props {
+  page: number;
+  totalPages: number;
+}
+
+function Carousel({page, totalPages}: Props) {
+  const [currentPage, setCurrentPage] = useState<number>(page);
 
   const paginate = (type: 'prev' | 'next') => {
     if (type === 'prev' && currentPage >= 1) {
       setCurrentPage(prev => prev - 1);
     } else {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage(prev => {
+        console.log('prev', prev);
+        console.log('Page', page);
+        console.log('CurrentPage', currentPage);
+
+        return prev + 1;
+      });
     }
   };
 
@@ -20,11 +33,20 @@ function Carousel() {
       <div className="grid-movie-title">
         <div className="movieType">Now Playing</div>
         <div className="paginate">
-          <PaginateComponent currentPage={currentPage} totalPages={10} paginate={paginate} />
+          <PaginateComponent
+            currentPage={currentPage}
+            totalPages={totalPages}
+            paginate={paginate}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-export default Carousel;
+const mapStateToProps = (state: IStoreState) => ({
+  page: state.movies.page,
+  totalPages: state.movies.totalPages,
+});
+
+export default connect(mapStateToProps)(Carousel);

@@ -3,6 +3,8 @@ import MovieActionTypes from '../actions/movies.actions.types';
 
 const INITIAL_STATE = {
   movies: [],
+  page: 1,
+  totalPages: 0,
 };
 
 const movieReducer = (state = INITIAL_STATE, action: any) => {
@@ -11,6 +13,12 @@ const movieReducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         movies: action.payload,
+      };
+    case MovieActionTypes.RESPONSE_PAGE:
+      return {
+        ...state,
+        page: action.payload.page,
+        totalPages: action.payload.total_pages,
       };
     default:
       return state;
