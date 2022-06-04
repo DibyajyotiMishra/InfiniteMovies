@@ -18,10 +18,6 @@ function Carousel({page, totalPages}: Props) {
       setCurrentPage(prev => prev - 1);
     } else {
       setCurrentPage(prev => {
-        console.log('prev', prev);
-        console.log('Page', page);
-        console.log('CurrentPage', currentPage);
-
         return prev + 1;
       });
     }
