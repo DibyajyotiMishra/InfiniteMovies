@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import {v4 as uuid} from 'uuid';
 import IStoreState from '../../redux/StoreTypes';
 import {imageUrl} from '../../services/movies.service';
+import LazyImage from '../LazyImage';
 import Rating from '../Rating';
 import './styles.scss';
 
@@ -24,13 +25,7 @@ const Gallery = ({movies}: Props) => {
     <React.Fragment>
       <div className="grid">
         {movieData.map(movie => (
-          <div
-            key={uuid()}
-            className="grid-cell"
-            style={{
-              backgroundImage: `url(${imageUrl}${movie.poster_path})`,
-            }}
-          >
+          <LazyImage key={uuid()} className="grid-cell" src={`${imageUrl}${movie.poster_path}`}>
             <div className="grid-read-more">
               <button className="grid-cell-button">Learn More</button>
             </div>
@@ -42,7 +37,7 @@ const Gallery = ({movies}: Props) => {
                 <div className="grid-rating average">{movie.vote_average}</div>
               </div>
             </div>
-          </div>
+          </LazyImage>
         ))}
       </div>
     </React.Fragment>
