@@ -56,3 +56,7 @@ export const setResponsePageNumber =
     };
     dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
   };
+
+export const setMovieType = (type: string) => (dispatch: any) => {
+  dispatchMethod(MovieActionTypes.MOVIE_TYPE, type, dispatch);
+};

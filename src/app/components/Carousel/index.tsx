@@ -8,9 +8,10 @@ import './styles.scss';
 interface Props {
   page: number;
   totalPages: number;
+  movieType: string;
 }
 
-function Carousel({page, totalPages}: Props) {
+function Carousel({page, totalPages, movieType}: Props) {
   const [currentPage, setCurrentPage] = useState<number>(page);
 
   const paginate = (type: 'prev' | 'next') => {
@@ -27,7 +28,7 @@ function Carousel({page, totalPages}: Props) {
     <div className="carousel">
       <Slider />
       <div className="grid-movie-title">
-        <div className="movieType">Now Playing</div>
+        <div className="movieType">{movieType}</div>
         <div className="paginate">
           <PaginateComponent
             currentPage={currentPage}
@@ -43,6 +44,7 @@ function Carousel({page, totalPages}: Props) {
 const mapStateToProps = (state: IStoreState) => ({
   page: state.movies.page,
   totalPages: state.movies.totalPages,
+  movieType: state.movies.movieType,
 });
 
 export default connect(mapStateToProps)(Carousel);

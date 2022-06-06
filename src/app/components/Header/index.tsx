@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prefer-const */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -5,7 +7,7 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import logo from '../../assets/movies.svg';
-import {fetchMovies} from '../../redux/actions/movies.action';
+import {fetchMovies, setMovieType, setResponsePageNumber} from '../../redux/actions/movies.action';
 import IStoreState from '../../redux/StoreTypes';
 import './styles.scss';
 
@@ -38,16 +40,24 @@ const headerList = [
 
 interface Props {
   getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') => void;
+  setMovieType: (type: string) => void;
   movies: any;
+  page: number;
+  totalPages: number;
+  updatePageNumber: (pageNumber: number, totalPages: number) => void;
 }
 
-function Header({getMovies, movies}: Props) {
+function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNumber}: Props) {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
+  const [type, setType] = useState<string>('now_playing');
 
   useEffect(() => {
-    getMovies(1, 'now_playing');
-  }, []);
+    if (type === 'now_playing' || type === 'top_rated' || type === 'popular') {
+      getMovies(page, type);
+      updatePageNumber(page, totalPages);
+    }
+  }, [type, page]);
 
   const toggleMenu = () => {
     navClass = !navClass;
@@ -61,7 +71,10 @@ function Header({getMovies, movies}: Props) {
     }
   };
 
-  console.log('movies : ', movies);
+  const setMovieTypeUrl = (type: string, name: string) => {
+    setType(type);
+    setMovieType(name);
+  };
 
   return (
     <div className="header-nav-wrapper">
@@ -81,7 +94,11 @@ function Header({getMovies, movies}: Props) {
         </div>
         <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
           {headerList.map(item => (
-            <li key={item.id} className="header-nav-item">
+            <li
+              key={item.id}
+              className="header-nav-item"
+              onClick={() => setMovieTypeUrl(item.type, item.name)}
+            >
               <span className="header-list-name">
                 <i className={item.iconClass} />
               </span>
@@ -98,11 +115,16 @@ function Header({getMovies, movies}: Props) {
 
 const mapStateToProps = (state: IStoreState) => ({
   movies: state.movies,
+  page: state.movies.page,
+  totalPages: state.movies.totalPages,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') =>
     dispatch(fetchMovies(page, type)),
+  setMovieType: (type: string) => dispatch(setMovieType(type)),
+  updatePageNumber: (pageNumber: number, totalPages: number) =>
+    dispatch(setResponsePageNumber(pageNumber, totalPages)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

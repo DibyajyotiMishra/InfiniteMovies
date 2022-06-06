@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   movies: [],
   page: 1,
   totalPages: 0,
+  movieType: 'Now Playing',
 };
 
 const movieReducer = (state = INITIAL_STATE, action: any) => {
@@ -24,6 +25,11 @@ const movieReducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         movies: [...state.movies, ...action.payload],
+      };
+    case MovieActionTypes.MOVIE_TYPE:
+      return {
+        ...state,
+        movieType: action.payload,
       };
     default:
       return state;
