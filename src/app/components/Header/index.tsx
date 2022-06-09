@@ -22,7 +22,7 @@ const headerList = [
     id: 2,
     iconClass: 'fas fa-fire',
     name: 'Trending',
-    type: 'trending',
+    type: 'popular',
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ const headerList = [
 ];
 
 interface Props {
-  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') => void;
+  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') => void;
   setMovieType: (type: string) => void;
   movies: any;
   page: number;
@@ -53,7 +53,12 @@ function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNu
   const [type, setType] = useState<string>('now_playing');
 
   useEffect(() => {
-    if (type === 'now_playing' || type === 'top_rated' || type === 'popular') {
+    if (
+      type === 'now_playing' ||
+      type === 'top_rated' ||
+      type === 'popular' ||
+      type === 'upcoming'
+    ) {
       getMovies(page, type);
       updatePageNumber(page, totalPages);
     }
@@ -71,9 +76,9 @@ function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNu
     }
   };
 
-  const setMovieTypeUrl = (type: string, name: string) => {
+  const setMovieTypeUrl = (type: string) => {
     setType(type);
-    setMovieType(name);
+    setMovieType(type);
   };
 
   return (
@@ -96,8 +101,8 @@ function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNu
           {headerList.map(item => (
             <li
               key={item.id}
-              className="header-nav-item"
-              onClick={() => setMovieTypeUrl(item.type, item.name)}
+              className={item.type === type ? 'header-nav-item active-item' : 'header-nav-item'}
+              onClick={() => setMovieTypeUrl(item.type)}
             >
               <span className="header-list-name">
                 <i className={item.iconClass} />
@@ -120,7 +125,7 @@ const mapStateToProps = (state: IStoreState) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular') =>
+  getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') =>
     dispatch(fetchMovies(page, type)),
   setMovieType: (type: string) => dispatch(setMovieType(type)),
   updatePageNumber: (pageNumber: number, totalPages: number) =>

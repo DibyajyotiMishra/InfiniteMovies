@@ -14,6 +14,13 @@ interface Props {
 function Carousel({page, totalPages, movieType}: Props) {
   const [currentPage, setCurrentPage] = useState<number>(page);
 
+  const headerType: any = {
+    now_playing: 'Now Playing',
+    top_rated: 'Top Rated',
+    popular: 'Trending',
+    upcoming: 'Upcoming',
+  };
+
   const paginate = (type: 'prev' | 'next') => {
     if (type === 'prev' && currentPage >= 1) {
       setCurrentPage(prev => prev - 1);
@@ -28,7 +35,7 @@ function Carousel({page, totalPages, movieType}: Props) {
     <div className="carousel">
       <Slider />
       <div className="grid-movie-title">
-        <div className="movieType">{movieType}</div>
+        <div className="movieType">{headerType[movieType]}</div>
         <div className="paginate">
           <PaginateComponent
             currentPage={currentPage}

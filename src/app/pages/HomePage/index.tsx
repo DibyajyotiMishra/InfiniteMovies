@@ -9,14 +9,25 @@ import './styles.scss';
 import IStoreState from '../../redux/StoreTypes';
 
 interface IHomePageProps {
-  loadMoreMovies: (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular') => void;
+  loadMoreMovies: (
+    pageNumber: number,
+    type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming',
+  ) => void;
   movies: Array<any>;
   page: number;
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
+  movieType: 'now_playing' | 'top_rated' | 'popular' | 'upcoming';
 }
 
-function HomePage({loadMoreMovies, movies, page, totalPages, updatePageNumber}: IHomePageProps) {
+function HomePage({
+  loadMoreMovies,
+  movies,
+  page,
+  totalPages,
+  updatePageNumber,
+  movieType,
+}: IHomePageProps) {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(page);
 
@@ -39,7 +50,7 @@ function HomePage({loadMoreMovies, movies, page, totalPages, updatePageNumber}: 
     if (page < totalPages) {
       pageNumber += 1;
       setCurrentPage(pageNumber);
-      loadMoreMovies(pageNumber, 'now_playing');
+      loadMoreMovies(pageNumber, movieType);
     }
   };
 
@@ -73,8 +84,10 @@ function HomePage({loadMoreMovies, movies, page, totalPages, updatePageNumber}: 
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-  loadMoreMovies: (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular') =>
-    dispatch(fetchMoreMovies(pageNumber, type)),
+  loadMoreMovies: (
+    pageNumber: number,
+    type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming',
+  ) => dispatch(fetchMoreMovies(pageNumber, type)),
   updatePageNumber: (pageNumber: number, totalPages: number) =>
     dispatch(setResponsePageNumber(pageNumber, totalPages)),
 });
@@ -83,6 +96,7 @@ const mapStateToProps = (state: IStoreState) => ({
   movies: state.movies.movies,
   page: state.movies.page,
   totalPages: state.movies.totalPages,
+  movieType: state.movies.movieType,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

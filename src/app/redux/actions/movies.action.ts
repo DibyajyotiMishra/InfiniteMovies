@@ -11,7 +11,7 @@ const dispatchMethod = (type: string, payload: any, dispatch: any) => {
 
 const getMoviesRequest = async (
   pageNumber: number,
-  type: 'now_playing' | 'top_rated' | 'popular',
+  type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming',
 ) => {
   const movies = await getMovies(pageNumber, type);
   const {results, page, total_pages} = movies;
@@ -23,7 +23,8 @@ const getMoviesRequest = async (
 };
 
 export const fetchMovies =
-  (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular') => async (dispatch: any) => {
+  (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') =>
+  async (dispatch: any) => {
     try {
       const {results, payload} = await getMoviesRequest(pageNumber, type);
       dispatchMethod(MovieActionTypes.MOVIES_LIST, results, dispatch);
@@ -36,11 +37,16 @@ export const fetchMovies =
   };
 
 export const fetchMoreMovies =
-  (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular') => async (dispatch: any) => {
+  (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') =>
+  async (dispatch: any) => {
     try {
       const {results, payload} = await getMoviesRequest(pageNumber, type);
-      dispatchMethod(MovieActionTypes.LOAD_MORE_MOVIES, results, dispatch);
-      dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
+      dispatchMethod(
+        MovieActionTypes.LOAD_MORE_MOVIES,
+        {movies: results, page: payload.page, totalPages: payload.total_pages},
+        dispatch,
+      );
+      // dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
     } catch (error: any) {
       if (error.response) {
         dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
