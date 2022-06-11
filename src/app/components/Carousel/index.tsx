@@ -1,5 +1,7 @@
-import React, {useState} from 'react';
+/* eslint-disable no-unused-vars */
+import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
+import {fetchMovies, setResponsePageNumber} from '../../redux/actions/movies.action';
 import IStoreState from '../../redux/StoreTypes';
 import PaginateComponent from '../PaginateComponent';
 import Slider from './slider';
@@ -9,9 +11,11 @@ interface Props {
   page: number;
   totalPages: number;
   movieType: string;
+  getMovies: (pageNumber: number, type: string) => void;
+  updatePageNumber: (pageNumber: number, totalPages: number) => void;
 }
 
-function Carousel({page, totalPages, movieType}: Props) {
+function Carousel({page, totalPages, movieType, getMovies, updatePageNumber}: Props) {
   const [currentPage, setCurrentPage] = useState<number>(page);
 
   const headerType: any = {
@@ -21,14 +25,20 @@ function Carousel({page, totalPages, movieType}: Props) {
     upcoming: 'Upcoming',
   };
 
+  useEffect(() => {
+    setCurrentPage(page);
+  }, [page, totalPages]);
+
   const paginate = (type: 'prev' | 'next') => {
+    let pageNumber = currentPage;
     if (type === 'prev' && currentPage >= 1) {
-      setCurrentPage(prev => prev - 1);
+      pageNumber -= 1;
     } else {
-      setCurrentPage(prev => {
-        return prev + 1;
-      });
+      pageNumber += 1;
     }
+    setCurrentPage(pageNumber);
+    updatePageNumber(pageNumber, totalPages);
+    getMovies(pageNumber, movieType);
   };
 
   return (
@@ -54,4 +64,10 @@ const mapStateToProps = (state: IStoreState) => ({
   movieType: state.movies.movieType,
 });
 
-export default connect(mapStateToProps)(Carousel);
+const mapDispatchToProps = (dispatch: any) => ({
+  getMovies: (pageNumber: number, type: string) => dispatch(fetchMovies(pageNumber, type)),
+  updatePageNumber: (pageNumber: number, totalPages: number) =>
+    dispatch(setResponsePageNumber(pageNumber, totalPages)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Carousel);

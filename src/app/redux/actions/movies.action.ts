@@ -9,10 +9,7 @@ const dispatchMethod = (type: string, payload: any, dispatch: any) => {
   });
 };
 
-const getMoviesRequest = async (
-  pageNumber: number,
-  type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming',
-) => {
+const getMoviesRequest = async (pageNumber: number, type: string) => {
   const movies = await getMovies(pageNumber, type);
   const {results, page, total_pages} = movies;
   const payload = {
@@ -22,19 +19,17 @@ const getMoviesRequest = async (
   return {results, payload};
 };
 
-export const fetchMovies =
-  (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') =>
-  async (dispatch: any) => {
-    try {
-      const {results, payload} = await getMoviesRequest(pageNumber, type);
-      dispatchMethod(MovieActionTypes.MOVIES_LIST, results, dispatch);
-      dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
-    } catch (error: any) {
-      if (error.response) {
-        dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
-      }
+export const fetchMovies = (pageNumber: number, type: string) => async (dispatch: any) => {
+  try {
+    const {results, payload} = await getMoviesRequest(pageNumber, type);
+    dispatchMethod(MovieActionTypes.MOVIES_LIST, results, dispatch);
+    dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
+  } catch (error: any) {
+    if (error.response) {
+      dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
     }
-  };
+  }
+};
 
 export const fetchMoreMovies =
   (pageNumber: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') =>
