@@ -7,39 +7,58 @@
 /* eslint-disable no-undefined */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import IStoreState from '../../redux/StoreTypes';
+import {imageUrl} from '../../services/movies.service';
 import './slider.styles.scss';
 
-function Slider() {
-  const images = [
-    {
-      url: 'https://images.pexels.com/photos/572897/pexels-photo-572897.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-      url: 'https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-      url: 'https://images.pexels.com/photos/624015/pexels-photo-624015.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-      url: 'https://images.pexels.com/photos/2387418/pexels-photo-2387418.jpeg?cs=srgb&dl=pexels-ezra-comeau-2387418.jpg&fm=jpg',
-    },
-    {
-      url: 'https://images.pexels.com/photos/6004828/pexels-photo-6004828.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-      url: 'https://images.pexels.com/photos/1671324/pexels-photo-1671324.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-      url: 'https://images.pexels.com/photos/4245826/pexels-photo-4245826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-  ];
+interface Props {
+  movies: Array<any>;
+}
+
+function Slider({movies}: Props) {
+  const [images, setImages] = useState<Array<any>>([]);
+
+  const randomMovies = movies.sort(() => Math.random() - Math.random()).slice(0, 5);
+
+  useEffect(() => {
+    if (randomMovies.length > 0) {
+      const IMAGES = [
+        {
+          id: 1,
+          url: `${imageUrl}/${randomMovies[0]?.backdrop_path}`,
+        },
+        {
+          id: 2,
+          url: `${imageUrl}/${randomMovies[1]?.backdrop_path}`,
+        },
+        {
+          id: 3,
+          url: `${imageUrl}/${randomMovies[2]?.backdrop_path}`,
+        },
+        {
+          id: 4,
+          url: `${imageUrl}/${randomMovies[3]?.backdrop_path}`,
+        },
+        {
+          id: 5,
+          url: `${imageUrl}/${randomMovies[4]?.backdrop_path}`,
+        },
+      ];
+      setImages(IMAGES);
+    }
+
+    // console.log(movies);
+  }, []);
+
+  // console.log('** ', images);
 
   const [state, setState] = useState({
     slideShow: images[0],
     slideShowIndex: 0,
   });
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
   const {slideShow, slideShowIndex} = state;
 
@@ -58,7 +77,7 @@ function Slider() {
   useEffect(() => {
     const slideInterval = setInterval(() => {
       autoMoveSlide();
-    }, 3500);
+    }, 1500);
     return () => {
       clearInterval(slideInterval);
     };
@@ -132,4 +151,8 @@ function Slider() {
   );
 }
 
-export default Slider;
+const mapStateToProps = (state: IStoreState) => ({
+  movies: state.movies.movies,
+});
+
+export default connect(mapStateToProps)(Slider);
