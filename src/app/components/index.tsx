@@ -1,4 +1,5 @@
 // COMPONENT IMPORTS
+import SearchResults from './SearchResults';
 import Spinner from './Spinner';
 import Rating from './Rating';
 import Gallery from './Gallery';
@@ -9,6 +10,7 @@ import Carousel from './Carousel';
 
 export {
   // COMPONENT EXPORTS
+  SearchResults,
   Spinner,
   Rating,
   Gallery,

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import {getMovies} from '../../services/movies.service';
+import {getMovies, SEARCH_API_URL} from '../../services/movies.service';
 import MovieActionTypes from './movies.actions.types';
 
 const dispatchMethod = (type: string, payload: any, dispatch: any) => {
@@ -58,6 +58,25 @@ export const setResponsePageNumber =
     dispatchMethod(MovieActionTypes.RESPONSE_PAGE, payload, dispatch);
   };
 
+export const setSearchResult = (query: string) => async (dispatch: any) => {
+  try {
+    if (query) {
+      const movies = await SEARCH_API_URL(query);
+      dispatchMethod(MovieActionTypes.SEARCH_RESULT, movies.results, dispatch);
+    } else {
+      dispatchMethod(MovieActionTypes.SEARCH_RESULT, [], dispatch);
+    }
+  } catch (error: any) {
+    if (error.response) {
+      dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
+    }
+  }
+};
+
 export const setMovieType = (type: string) => (dispatch: any) => {
   dispatchMethod(MovieActionTypes.MOVIE_TYPE, type, dispatch);
+};
+
+export const setSearchQuery = (query: string) => (dispatch: any) => {
+  dispatchMethod(MovieActionTypes.SEARCH_QUERY, query, dispatch);
 };

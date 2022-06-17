@@ -7,7 +7,13 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import logo from '../../assets/movies.svg';
-import {fetchMovies, setMovieType, setResponsePageNumber} from '../../redux/actions/movies.action';
+import {
+  fetchMovies,
+  setMovieType,
+  setResponsePageNumber,
+  setSearchQuery,
+  setSearchResult,
+} from '../../redux/actions/movies.action';
 import IStoreState from '../../redux/StoreTypes';
 import './styles.scss';
 
@@ -41,16 +47,28 @@ const headerList = [
 interface Props {
   getMovies: (page: number, type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming') => void;
   setMovieType: (type: string) => void;
+  setSearchResult: (query: string) => void;
+  setSearchQuery: (query: string) => void;
   movies: any;
   page: number;
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
 }
 
-function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNumber}: Props) {
+function Header({
+  getMovies,
+  movies,
+  setMovieType,
+  setSearchResult,
+  setSearchQuery,
+  page,
+  totalPages,
+  updatePageNumber,
+}: Props) {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
   const [type, setType] = useState<string>('now_playing');
+  const [query, setQuery] = useState<string>('');
 
   useEffect(() => {
     if (
@@ -79,6 +97,12 @@ function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNu
   const setMovieTypeUrl = (type: string) => {
     setType(type);
     setMovieType(type);
+  };
+
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    setSearchQuery(event.target.value);
+    setSearchResult(event.target.value);
   };
 
   return (
@@ -111,7 +135,13 @@ function Header({getMovies, movies, setMovieType, page, totalPages, updatePageNu
               <span className="header-list-name">{item.name}</span>
             </li>
           ))}
-          <input type="text" className="search-input" placeholder="Search for movies" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search for movies"
+            value={query}
+            onChange={onSearchChange}
+          />
         </ul>
       </div>
     </div>
@@ -130,6 +160,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   setMovieType: (type: string) => dispatch(setMovieType(type)),
   updatePageNumber: (pageNumber: number, totalPages: number) =>
     dispatch(setResponsePageNumber(pageNumber, totalPages)),
+  setSearchQuery: (query: string) => dispatch(setSearchQuery(query)),
+  setSearchResult: (query: string) => dispatch(setSearchResult(query)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

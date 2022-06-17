@@ -1,9 +1,10 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-unused-vars */
 import React, {useState, useEffect, useRef} from 'react';
 import {connect} from 'react-redux';
 import {Helmet} from 'react-helmet';
-import {Carousel, Gallery, Spinner} from '../../components';
+import {Carousel, Gallery, SearchResults, Spinner} from '../../components';
 import {fetchMoreMovies, setResponsePageNumber} from '../../redux/actions/movies.action';
 import './styles.scss';
 import IStoreState from '../../redux/StoreTypes';
@@ -14,6 +15,7 @@ interface IHomePageProps {
     type: 'now_playing' | 'top_rated' | 'popular' | 'upcoming',
   ) => void;
   movies: Array<any>;
+  searchResult: Array<any>;
   page: number;
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
@@ -23,6 +25,7 @@ interface IHomePageProps {
 function HomePage({
   loadMoreMovies,
   movies,
+  searchResult,
   page,
   totalPages,
   updatePageNumber,
@@ -65,6 +68,8 @@ function HomePage({
     }
   };
 
+  console.log(searchResult.length);
+
   return (
     <div className="main" ref={mainRef} onScroll={() => handleScroll()}>
       <Helmet>
@@ -72,6 +77,8 @@ function HomePage({
       </Helmet>
       {loading ? (
         <Spinner />
+      ) : searchResult && searchResult.length > 0 ? (
+        <SearchResults />
       ) : (
         <div className="main__content">
           <Carousel />
@@ -94,6 +101,7 @@ const mapDispatchToProps = (dispatch: any) => ({
 
 const mapStateToProps = (state: IStoreState) => ({
   movies: state.movies.movies,
+  searchResult: state.movies.searchResult,
   page: state.movies.page,
   totalPages: state.movies.totalPages,
   movieType: state.movies.movieType,

@@ -4,6 +4,8 @@ const MovieActionTypes = {
   RESPONSE_PAGE: 'RESPONSE_PAGE',
   LOAD_MORE_MOVIES: 'LOAD_MORE_MOVIES',
   MOVIE_TYPE: 'MOVIE_TYPE',
+  SEARCH_QUERY: 'SEARCH_QUERY',
+  SEARCH_RESULT: 'SEARCH_RESULT',
 };
 
 export default MovieActionTypes;

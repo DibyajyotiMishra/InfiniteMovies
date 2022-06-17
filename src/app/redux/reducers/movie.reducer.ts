@@ -6,6 +6,8 @@ const INITIAL_STATE = {
   page: 1,
   totalPages: 0,
   movieType: 'now_playing',
+  searchQuery: '',
+  searchResult: [],
 };
 
 const movieReducer = (state = INITIAL_STATE, action: any) => {
@@ -32,6 +34,16 @@ const movieReducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         movieType: action.payload,
+      };
+    case MovieActionTypes.SEARCH_QUERY:
+      return {
+        ...state,
+        searchQuery: action.payload,
+      };
+    case MovieActionTypes.SEARCH_RESULT:
+      return {
+        ...state,
+        searchResult: action.payload,
       };
     default:
       return state;
