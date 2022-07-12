@@ -4,6 +4,7 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {v4 as uuid} from 'uuid';
+import {Link} from 'react-router-dom';
 import LazyImage from '../LazyImage';
 import Rating from '../Rating';
 import {imageUrl} from '../../services/movies.service';
@@ -23,6 +24,11 @@ const SearchResults = ({searchQuery, searchResult}: Props) => {
     setMovieData(searchResult);
   }, [searchResult]);
 
+  const formatUrl = (title: string) => {
+    const updatedTitle: string = title.toLowerCase();
+    return updatedTitle.replace(/ /g, '-');
+  };
+
   return (
     <div className="search">
       <div className="grid-search-title">
@@ -33,7 +39,9 @@ const SearchResults = ({searchQuery, searchResult}: Props) => {
         {movieData.map(movie => (
           <LazyImage key={uuid()} className="grid-cell" src={`${imageUrl}${movie.poster_path}`}>
             <div className="grid-read-more">
-              <button className="grid-cell-button">Learn More</button>
+              <button className="grid-cell-button">
+                <Link to={`/${movie.id}/${formatUrl(movie.title)}/details`}>Learn More</Link>
+              </button>
             </div>
             <div className="grid-detail">
               <span className="grid-detail-title">{movie.title}</span>
