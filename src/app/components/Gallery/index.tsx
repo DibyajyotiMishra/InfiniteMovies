@@ -4,6 +4,7 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {v4 as uuid} from 'uuid';
+import {Link} from 'react-router-dom';
 import IStoreState from '../../redux/StoreTypes';
 import {imageUrl} from '../../services/movies.service';
 import LazyImage from '../LazyImage';
@@ -21,13 +22,23 @@ const Gallery = ({movies}: Props) => {
     setMovieData(movies);
   }, [movies]);
 
+  const formatUrl = (title: string) => {
+    const updatedTitle: string = title.toLowerCase();
+    return updatedTitle.replace(/ /g, '-');
+  };
+
   return (
     <React.Fragment>
       <div className="grid">
         {movieData.map(movie => (
           <LazyImage key={uuid()} className="grid-cell" src={`${imageUrl}${movie.poster_path}`}>
             <div className="grid-read-more">
-              <button className="grid-cell-button">Learn More</button>
+              <Link
+                to={`/${movie.id}/${formatUrl(movie.title)}/details`}
+                className="grid-cell-button"
+              >
+                Learn More
+              </Link>
             </div>
             <div className="grid-detail">
               <span className="grid-detail-title">{movie.title}</span>

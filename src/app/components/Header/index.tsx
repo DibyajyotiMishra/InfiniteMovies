@@ -6,6 +6,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import logo from '../../assets/movies.svg';
 import {
   fetchMovies,
@@ -110,7 +111,9 @@ function Header({
       <div className="header-bar" />
       <div className="header-navbar">
         <div className="header-image">
-          <img src={logo} alt="logo" />
+          <Link to="/">
+            <img src={logo} alt="logo" />
+          </Link>
         </div>
         <div
           onClick={() => toggleMenu()}
