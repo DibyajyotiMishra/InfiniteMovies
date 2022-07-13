@@ -17,3 +17,36 @@ export const SEARCH_API_URL = async (query: string) => {
   );
   return response.data;
 };
+
+export const getDetails = async (id: number) => {
+  const response = await axios.get(`${baseUrl}/movie/${id}?api_key=${apiKey}&language=en-US`);
+  return response.data;
+};
+
+export const getMovieCredits = async (id: number) => {
+  const response = await axios.get(
+    `${baseUrl}/movie/${id}/credits?api_key=${apiKey}&language=en-US`,
+  );
+  return response.data;
+};
+
+export const getMovieImages = async (id: number) => {
+  const response = await axios.get(
+    `${baseUrl}/movie/${id}/images?api_key=${apiKey}&language=en-US&include_image_language=en`,
+  );
+  return response.data;
+};
+
+export const getMovieVideos = async (id: number) => {
+  const response = await axios.get(
+    `${baseUrl}/movie/${id}/videos?api_key=${apiKey}&language=en-US`,
+  );
+  return response.data;
+};
+
+export const getMovieReviews = async (id: number, page: number = 1) => {
+  const response = await axios.get(
+    `${baseUrl}/movie/${id}/reviews?api_key=${apiKey}&language=en-US&page=${page}`,
+  );
+  return response.data;
+};

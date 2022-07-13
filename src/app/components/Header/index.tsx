@@ -14,6 +14,7 @@ import {
   setResponsePageNumber,
   setSearchQuery,
   setSearchResult,
+  clearMovieDetails,
 } from '../../redux/actions/movies.action';
 import IStoreState from '../../redux/StoreTypes';
 import './styles.scss';
@@ -54,6 +55,7 @@ interface Props {
   page: number;
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
+  clearMovieDetails: () => void;
 }
 
 function Header({
@@ -65,6 +67,7 @@ function Header({
   page,
   totalPages,
   updatePageNumber,
+  clearMovieDetails,
 }: Props) {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
@@ -111,7 +114,7 @@ function Header({
       <div className="header-bar" />
       <div className="header-navbar">
         <div className="header-image">
-          <Link to="/">
+          <Link to="/" onClick={() => clearMovieDetails()}>
             <img src={logo} alt="logo" />
           </Link>
         </div>
@@ -165,6 +168,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(setResponsePageNumber(pageNumber, totalPages)),
   setSearchQuery: (query: string) => dispatch(setSearchQuery(query)),
   setSearchResult: (query: string) => dispatch(setSearchResult(query)),
+  clearMovieDetails: () => dispatch(clearMovieDetails()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

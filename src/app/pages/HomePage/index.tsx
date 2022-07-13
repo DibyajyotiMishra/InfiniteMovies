@@ -5,7 +5,11 @@ import React, {useState, useEffect, useRef} from 'react';
 import {connect} from 'react-redux';
 import {Helmet} from 'react-helmet';
 import {Carousel, Gallery, SearchResults, Spinner} from '../../components';
-import {fetchMoreMovies, setResponsePageNumber} from '../../redux/actions/movies.action';
+import {
+  fetchMoreMovies,
+  setResponsePageNumber,
+  clearMovieDetails,
+} from '../../redux/actions/movies.action';
 import './styles.scss';
 import IStoreState from '../../redux/StoreTypes';
 
@@ -20,6 +24,7 @@ interface IHomePageProps {
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
   movieType: 'now_playing' | 'top_rated' | 'popular' | 'upcoming';
+  clearDetails: () => void;
 }
 
 function HomePage({
@@ -30,6 +35,7 @@ function HomePage({
   totalPages,
   updatePageNumber,
   movieType,
+  clearDetails,
 }: IHomePageProps) {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(page);
@@ -37,6 +43,7 @@ function HomePage({
   const mainRef = useRef<HTMLDivElement>(null);
   const bottomLineRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    clearDetails();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -97,6 +104,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   ) => dispatch(fetchMoreMovies(pageNumber, type)),
   updatePageNumber: (pageNumber: number, totalPages: number) =>
     dispatch(setResponsePageNumber(pageNumber, totalPages)),
+  clearDetails: () => dispatch(clearMovieDetails()),
 });
 
 const mapStateToProps = (state: IStoreState) => ({

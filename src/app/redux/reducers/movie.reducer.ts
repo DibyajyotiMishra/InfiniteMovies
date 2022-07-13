@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   movieType: 'now_playing',
   searchQuery: '',
   searchResult: [],
+  movieDetails: [],
 };
 
 const movieReducer = (state = INITIAL_STATE, action: any) => {
@@ -44,6 +45,16 @@ const movieReducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         searchResult: action.payload,
+      };
+    case MovieActionTypes.MOVIE_DETAILS:
+      return {
+        ...state,
+        movieDetails: action.payload,
+      };
+    case MovieActionTypes.CLEAR_MOVIE_DETAILS:
+      return {
+        ...state,
+        movieDetails: [],
       };
     default:
       return state;
