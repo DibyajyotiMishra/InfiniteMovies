@@ -7,8 +7,8 @@ import {Helmet} from 'react-helmet';
 import {Crew, Media, Overview, Rating, Reviews, Tabs} from '../../components';
 import IStoreState from '../../redux/StoreTypes';
 import {getMovieDetails} from '../../redux/actions/movies.action';
-import './styles.scss';
 import {imageUrl} from '../../services/movies.service';
+import './styles.scss';
 
 declare module 'react' {
   interface Attributes {
@@ -53,19 +53,20 @@ const DetailsPage = ({getDetails, movieDetails}: Props) => {
             <div className="movie-body">
               <div className="movie-overview">
                 <div className="title">
-                  Avengers <span>03-12-2020</span>
+                  {details.title} <span>{details.release_date}</span>
                 </div>
                 <div className="movie-genres">
                   <ul className="genres">
-                    <li>Action</li>
-                    <li>Comedy</li>
-                    <li>Sci-fi</li>
+                    {details &&
+                      details.genres.map((genre: {id: number; name: string}) => (
+                        <li key={genre.id}>{genre.name}</li>
+                      ))}
                   </ul>
                 </div>
                 <div className="rating">
-                  <Rating rating={7} totalStars={10} />
+                  <Rating rating={details.vote_average} totalStars={10} />
                   &nbsp;
-                  <span>6.7</span> <p>(200) reviews</p>
+                  <span>{details.vote_average}</span> <p>({details.vote_count}) reviews</p>
                 </div>
                 <Tabs>
                   <div label="Overview">

@@ -1,10 +1,19 @@
 /* eslint-disable no-plusplus */
 import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {v4 as uuid} from 'uuid';
+import IStoreState from '../../redux/StoreTypes';
+import {imageUrl} from '../../services/movies.service';
 import './styles.scss';
 
-const Overview = () => {
-  const [items, setItems] = useState<Array<any>>([]);
+interface Props {
+  movieDetails: any;
+}
 
+const Overview = ({movieDetails}: Props) => {
+  const [items, setItems] = useState<Array<any>>([]);
+  const [details] = useState<any>(movieDetails[0]);
+  const [credits] = useState<any>(movieDetails[1]);
   const numberFormatter = (number: number, digits: number) => {
     const symbolArray = [
       {value: 1, symbol: ''},
@@ -30,32 +39,32 @@ const Overview = () => {
       {
         id: 0,
         name: 'Tagline',
-        value: 'Part of the journey is the end',
+        value: `${details.tagline}`,
       },
       {
         id: 1,
         name: 'Budget',
-        value: `${numberFormatter(356000000, 1)}`,
+        value: `${numberFormatter(details.budget, 1)}`,
       },
       {
         id: 2,
         name: 'Revenue',
-        value: `${numberFormatter(28000000000, 1)}`,
+        value: `${numberFormatter(details.revenue, 1)}`,
       },
       {
         id: 3,
         name: 'Status',
-        value: 'Released',
+        value: `${details.status}`,
       },
       {
         id: 4,
         name: 'Release Date',
-        value: '2019-04-24',
+        value: `${details.release_date}`,
       },
       {
         id: 5,
         name: 'Run Time',
-        value: '181 min',
+        value: `${details.runtime} minutes`,
       },
     ];
     setItems(detailItems);
@@ -66,35 +75,57 @@ const Overview = () => {
   return (
     <div className="overview">
       <div className="overview-column-1">
-        <div className="description">This is a description about the movie</div>
+        <div className="description">{details.overview}</div>
 
         <div className="cast">
           <div className="div-title">Cast</div>
           <table>
-            <tbody>
-              <tr>
-                <td>
-                  <img src="http://placehold.it/54x81" alt="" />
-                </td>
-                <td>Robert Downing Jr.</td>
-                <td>Iron Man</td>
-              </tr>
-            </tbody>
+            {credits.cast.map((data: any) => (
+              <tbody key={uuid()}>
+                <tr>
+                  <td>
+                    <img
+                      src={
+                        data.profile_path
+                          ? `${imageUrl}${data.profile_path}`
+                          : 'http://placehold.it/54x81'
+                      }
+                      alt=""
+                    />
+                  </td>
+                  <td>{data.name}</td>
+                  <td>{data.character}</td>
+                </tr>
+              </tbody>
+            ))}
           </table>
         </div>
       </div>
       <div className="overview-column-2">
         <div className="overview-detail">
           <h6>Production Companies</h6>
-          <div className="product-company">
-            <img src="http://placehold.it/30x30" alt="" />
-            <span>Marvel</span>
-          </div>
+          {details.production_companies.map((company: any) => (
+            <div className="product-company" key={uuid()}>
+              <img
+                src={
+                  company.logo_path
+                    ? `${imageUrl}${company.logo_path}`
+                    : 'http://placehold.it/30x30'
+                }
+                alt=""
+              />
+              <span>{company.name}</span>
+            </div>
+          ))}
         </div>
         <div className="overview-detail">
           <h6>Language(s)</h6>
           <p>
-            <a href="!#">English</a>
+            {details.spoken_languages.map((language: any) => (
+              <a key={uuid()} href="!#">
+                {language.name}
+              </a>
+            ))}
           </p>
         </div>
         <div className="overview-detail">
@@ -116,4 +147,10 @@ const Overview = () => {
   );
 };
 
-export default Overview;
+const mapStateToProps = (state: IStoreState) => {
+  return {
+    movieDetails: state.movies.movieDetails,
+  };
+};
+
+export default connect(mapStateToProps)(Overview);
