@@ -7,6 +7,7 @@ interface MoviesReducer {
   readonly movieType: 'popular' | 'top_rated' | 'upcoming' | 'now_playing';
   readonly searchQuery: string;
   readonly searchResult: Array<any>;
+  readonly movieDetails: Array<any>;
 }
 
 export default interface IStoreState {

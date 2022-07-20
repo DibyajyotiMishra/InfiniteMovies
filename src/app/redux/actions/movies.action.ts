@@ -1,5 +1,13 @@
 /* eslint-disable camelcase */
-import {getMovies, SEARCH_API_URL} from '../../services/movies.service';
+import {
+  getMovies,
+  SEARCH_API_URL,
+  getDetails,
+  getMovieCredits,
+  getMovieImages,
+  getMovieVideos,
+  getMovieReviews,
+} from '../../services/movies.service';
 import MovieActionTypes from './movies.actions.types';
 
 const dispatchMethod = (type: string, payload: any, dispatch: any) => {
@@ -79,4 +87,34 @@ export const setMovieType = (type: string) => (dispatch: any) => {
 
 export const setSearchQuery = (query: string) => (dispatch: any) => {
   dispatchMethod(MovieActionTypes.SEARCH_QUERY, query, dispatch);
+};
+
+export const getMovieDetails = (id: number) => async (dispatch: any) => {
+  try {
+    const details = await getDetails(id);
+    const credits = await getMovieCredits(id);
+    const images = await getMovieImages(id);
+    const videos = await getMovieVideos(id);
+    const reviews = await getMovieReviews(id);
+
+    const data = await Promise.all([details, credits, images, videos, reviews]).then(
+      response => response,
+    );
+
+    dispatchMethod(MovieActionTypes.MOVIE_DETAILS, data, dispatch);
+  } catch (error: any) {
+    if (error.response) {
+      dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
+    }
+  }
+};
+
+export const clearMovieDetails = () => (dispatch: any) => {
+  try {
+    dispatchMethod(MovieActionTypes.CLEAR_MOVIE_DETAILS, [], dispatch);
+  } catch (error: any) {
+    if (error.response) {
+      dispatchMethod(MovieActionTypes.SET_ERROR, error.response.data.message, dispatch);
+    }
+  }
 };

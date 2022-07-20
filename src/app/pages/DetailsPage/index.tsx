@@ -1,8 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import {Helmet} from 'react-helmet';
 import {Crew, Media, Overview, Rating, Reviews, Tabs} from '../../components';
+import IStoreState from '../../redux/StoreTypes';
+import {getMovieDetails} from '../../redux/actions/movies.action';
+import {imageUrl} from '../../services/movies.service';
 import './styles.scss';
 
 declare module 'react' {
@@ -12,64 +17,90 @@ declare module 'react' {
   }
 }
 
-const DetailsPage = () => {
+interface Props {
+  getDetails: (id: number) => void;
+  movieDetails: any;
+}
+
+const DetailsPage = ({getDetails, movieDetails}: Props) => {
+  const {id} = useParams<any>();
+  const [details, setDetails] = useState<any>();
+  useEffect(() => {
+    if (movieDetails.length === 0) {
+      getDetails(id);
+    }
+    setDetails(movieDetails[0]);
+  }, [id, movieDetails]);
+
   return (
-    <div>
+    <>
       <Helmet>
         <title>Details Page</title>
       </Helmet>
-      <div className="movie-container">
-        <div
-          className="movie-bg"
-          style={{
-            backgroundImage: `url(https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=600)`,
-          }}
-        />
-        <div className="movie-overlay" />
-        <div className="movie-details">
-          <div className="movie-image">
-            <img
-              src="https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=600"
-              alt="image"
-            />
-          </div>
-          <div className="movie-body">
-            <div className="movie-overview">
-              <div className="title">
-                Avengers <span>03-12-2020</span>
+      {details && (
+        <div className="movie-container">
+          <div
+            className="movie-bg"
+            style={{
+              backgroundImage: `url(${imageUrl}${details.backdrop_path})`,
+            }}
+          />
+          <div className="movie-overlay" />
+          <div className="movie-details">
+            <div className="movie-image">
+              <img src={`${imageUrl}${details.poster_path}`} alt="image" />
+            </div>
+            <div className="movie-body">
+              <div className="movie-overview">
+                <div className="title">
+                  {details.title} <span>{details.release_date}</span>
+                </div>
+                <div className="movie-genres">
+                  <ul className="genres">
+                    {details &&
+                      details.genres.map((genre: {id: number; name: string}) => (
+                        <li key={genre.id}>{genre.name}</li>
+                      ))}
+                  </ul>
+                </div>
+                <div className="rating">
+                  <Rating rating={details.vote_average} totalStars={10} />
+                  &nbsp;
+                  <span>{details.vote_average}</span> <p>({details.vote_count}) reviews</p>
+                </div>
+                <Tabs>
+                  <div label="Overview">
+                    <Overview />
+                  </div>
+                  <div label="Crew">
+                    <Crew />
+                  </div>
+                  <div label="Media">
+                    <Media />
+                  </div>
+                  <div label="Reviews">
+                    <Reviews />
+                  </div>
+                </Tabs>
               </div>
-              <div className="movie-genres">
-                <ul className="genres">
-                  <li>Action</li>
-                  <li>Comedy</li>
-                  <li>Sci-fi</li>
-                </ul>
-              </div>
-              <div className="rating">
-                <Rating rating={7} totalStars={10} />
-                &nbsp;
-                <span>6.7</span> <p>(200) reviews</p>
-              </div>
-              <Tabs>
-                <div label="Overview">
-                  <Overview />
-                </div>
-                <div label="Crew">
-                  <Crew />
-                </div>
-                <div label="Media">
-                  <Media />
-                </div>
-                <div label="Reviews">
-                  <Reviews />
-                </div>
-              </Tabs>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
-export default DetailsPage;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getDetails: (id: number) => dispatch(getMovieDetails(id)),
+  };
+};
+
+const mapStateToProps = (state: IStoreState) => {
+  return {
+    movieDetails: state.movies.movieDetails,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DetailsPage);

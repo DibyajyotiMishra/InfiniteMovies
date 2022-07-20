@@ -6,7 +6,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
+import {Link, useLocation, useHistory} from 'react-router-dom';
 import logo from '../../assets/movies.svg';
 import {
   fetchMovies,
@@ -14,6 +14,7 @@ import {
   setResponsePageNumber,
   setSearchQuery,
   setSearchResult,
+  clearMovieDetails,
 } from '../../redux/actions/movies.action';
 import IStoreState from '../../redux/StoreTypes';
 import './styles.scss';
@@ -54,6 +55,7 @@ interface Props {
   page: number;
   totalPages: number;
   updatePageNumber: (pageNumber: number, totalPages: number) => void;
+  clearMovieDetails: () => void;
 }
 
 function Header({
@@ -65,11 +67,15 @@ function Header({
   page,
   totalPages,
   updatePageNumber,
+  clearMovieDetails,
 }: Props) {
   let [navClass, setNavClass] = useState(false);
   let [menuClass, setMenuClass] = useState(false);
   const [type, setType] = useState<string>('now_playing');
   const [query, setQuery] = useState<string>('');
+  const [hideSearch, setHideSearch] = useState<boolean>(false);
+  const location = useLocation();
+  const history = useHistory();
 
   useEffect(() => {
     if (
@@ -81,7 +87,10 @@ function Header({
       getMovies(page, type);
       updatePageNumber(page, totalPages);
     }
-  }, [type, page]);
+    if (location.pathname !== '/' && location.key) {
+      setHideSearch(true);
+    }
+  }, [type, page, location, hideSearch]);
 
   const toggleMenu = () => {
     navClass = !navClass;
@@ -96,8 +105,16 @@ function Header({
   };
 
   const setMovieTypeUrl = (type: string) => {
-    setType(type);
-    setMovieType(type);
+    setHideSearch(false);
+    if (location.pathname !== '/') {
+      clearMovieDetails();
+      history.push('/');
+      setType(type);
+      setMovieType(type);
+    } else {
+      setType(type);
+      setMovieType(type);
+    }
   };
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +128,13 @@ function Header({
       <div className="header-bar" />
       <div className="header-navbar">
         <div className="header-image">
-          <Link to="/">
+          <Link
+            to="/"
+            onClick={() => {
+              setHideSearch(false);
+              clearMovieDetails();
+            }}
+          >
             <img src={logo} alt="logo" />
           </Link>
         </div>
@@ -140,7 +163,7 @@ function Header({
           ))}
           <input
             type="text"
-            className="search-input"
+            className={`search-input ${hideSearch ? 'disabled' : ''}`}
             placeholder="Search for movies"
             value={query}
             onChange={onSearchChange}
@@ -165,6 +188,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     dispatch(setResponsePageNumber(pageNumber, totalPages)),
   setSearchQuery: (query: string) => dispatch(setSearchQuery(query)),
   setSearchResult: (query: string) => dispatch(setSearchResult(query)),
+  clearMovieDetails: () => dispatch(clearMovieDetails()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
