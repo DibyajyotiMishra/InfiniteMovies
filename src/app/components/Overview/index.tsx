@@ -90,6 +90,8 @@ const Overview = ({movieDetails}: Props) => {
                           ? `${imageUrl}${data.profile_path}`
                           : 'http://placehold.it/54x81'
                       }
+                      height={90}
+                      width={80}
                       alt=""
                     />
                   </td>
