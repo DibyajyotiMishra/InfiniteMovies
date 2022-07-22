@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {Helmet} from 'react-helmet';
-import {Crew, Media, Overview, Rating, Reviews, Tabs} from '../../components';
+import {Crew, Media, Overview, Rating, Reviews, Spinner, Tabs} from '../../components';
 import IStoreState from '../../redux/StoreTypes';
 import {getMovieDetails} from '../../redux/actions/movies.action';
 import {imageUrl} from '../../services/movies.service';
@@ -25,6 +25,8 @@ interface Props {
 const DetailsPage = ({getDetails, movieDetails}: Props) => {
   const {id} = useParams<any>();
   const [details, setDetails] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     if (movieDetails.length === 0) {
       getDetails(id);
@@ -32,60 +34,71 @@ const DetailsPage = ({getDetails, movieDetails}: Props) => {
     setDetails(movieDetails[0]);
   }, [id, movieDetails]);
 
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
+
   return (
     <>
       <Helmet>
         <title>Details Page</title>
       </Helmet>
-      {details && (
-        <div className="movie-container">
-          <div
-            className="movie-bg"
-            style={{
-              backgroundImage: `url(${imageUrl}${details.backdrop_path})`,
-            }}
-          />
-          <div className="movie-overlay" />
-          <div className="movie-details">
-            <div className="movie-image">
-              <img src={`${imageUrl}${details.poster_path}`} alt="image" />
-            </div>
-            <div className="movie-body">
-              <div className="movie-overview">
-                <div className="title">
-                  {details.title} <span>{details.release_date}</span>
+      {loading ? (
+        <Spinner />
+      ) : (
+        details && (
+          <div className="movie-container">
+            <div
+              className="movie-bg"
+              style={{
+                backgroundImage: `url(${imageUrl}${details.backdrop_path})`,
+              }}
+            />
+            <div className="movie-overlay" />
+            <div className="movie-details">
+              <div className="movie-image">
+                <img src={`${imageUrl}${details.poster_path}`} alt="image" />
+              </div>
+              <div className="movie-body">
+                <div className="movie-overview">
+                  <div className="title">
+                    {details.title} <span>{details.release_date}</span>
+                  </div>
+                  <div className="movie-genres">
+                    <ul className="genres">
+                      {details &&
+                        details.genres.map((genre: {id: number; name: string}) => (
+                          <li key={genre.id}>{genre.name}</li>
+                        ))}
+                    </ul>
+                  </div>
+                  <div className="rating">
+                    <Rating rating={details.vote_average} totalStars={10} />
+                    &nbsp;
+                    <span>{details.vote_average}</span> <p>({details.vote_count}) reviews</p>
+                  </div>
+                  <Tabs>
+                    <div label="Overview">
+                      <Overview />
+                    </div>
+                    <div label="Crew">
+                      <Crew />
+                    </div>
+                    <div label="Media">
+                      <Media />
+                    </div>
+                    <div label="Reviews">
+                      <Reviews />
+                    </div>
+                  </Tabs>
                 </div>
-                <div className="movie-genres">
-                  <ul className="genres">
-                    {details &&
-                      details.genres.map((genre: {id: number; name: string}) => (
-                        <li key={genre.id}>{genre.name}</li>
-                      ))}
-                  </ul>
-                </div>
-                <div className="rating">
-                  <Rating rating={details.vote_average} totalStars={10} />
-                  &nbsp;
-                  <span>{details.vote_average}</span> <p>({details.vote_count}) reviews</p>
-                </div>
-                <Tabs>
-                  <div label="Overview">
-                    <Overview />
-                  </div>
-                  <div label="Crew">
-                    <Crew />
-                  </div>
-                  <div label="Media">
-                    <Media />
-                  </div>
-                  <div label="Reviews">
-                    <Reviews />
-                  </div>
-                </Tabs>
               </div>
             </div>
           </div>
-        </div>
+        )
       )}
     </>
   );
