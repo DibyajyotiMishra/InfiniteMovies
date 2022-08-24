@@ -1,5 +1,5 @@
 # pull from a base image
-FROM node:13-alpine
+FROM node:15-alpine
 
 # use 'app' as working directory
 WORKDIR /app
