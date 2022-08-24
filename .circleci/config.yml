@@ -347,6 +347,11 @@ workflows:
           type: approval
           requires:
             - send-notification
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
 
       - terraform-destroy:
           requires:
