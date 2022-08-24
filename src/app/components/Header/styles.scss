@@ -38,6 +38,7 @@
   margin-right: 25px;
 
   .header-nav-item {
+    cursor: pointer;
     .header-list-icon {
       padding-right: 5px;
     }
@@ -53,7 +54,7 @@
 }
 
 .header-nav-item .header-list-name {
-  font-size: 0.9rem;
+  font-size: 15px;
   font-weight: 400;
   text-decoration: none;
   transition: color 0.3s ease-out;
@@ -212,7 +213,7 @@
   }
 
   .header-navbar li .header-list-name {
-    font-size: 1rem;
+    font-size: 15px;
   }
 
   .header-nav-item {
