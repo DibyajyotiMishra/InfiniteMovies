@@ -340,7 +340,7 @@ workflows:
                 - develop
                 - staging
                 - master
-      - publish-to-docker-hub:
+      - publish-to-dockerhub:
           requires:
             - terraform-plan-and-apply
           filters:
