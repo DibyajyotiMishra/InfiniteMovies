@@ -1,10 +1,10 @@
 import {combineReducers} from 'redux';
-// import IStoreState from './StoreTypes';
+import errorReducer from './reducers/error.reducer';
+import movieReducer from './reducers/movie.reducer';
 
-//TODO: Add reducers type here
 const rootReducers = combineReducers<any>({
-  errors: '',
-  movies: '',
+  errors: errorReducer,
+  movies: movieReducer,
 });
 
 export default rootReducers;
