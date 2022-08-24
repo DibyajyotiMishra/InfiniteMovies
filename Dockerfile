@@ -16,7 +16,7 @@ RUN rm yarn.lock
 # RUN apt-get update && apt-get install -y yarn
 
 # install dependencies
-RUN yarn install
+RUN yarn install --ignore-engines
 
 # build production version
 RUN yarn build
