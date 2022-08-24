@@ -17,6 +17,14 @@ executors:
     docker:
       - image: hashicorp/terraform:latest
 
+  docker-publisher:
+    environment:
+      IMAGE_NAME: dibyajyotimishra/infinitemovies
+    docker:
+      - image: circleci/buildpack-deps:stretch
+
+
+
 aliases:
   - &show-current-branch
     run:
@@ -142,7 +150,24 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "develop" ]
             then git push https://heroku:$HEROKU_API_KEY@git.heroku.com/${HEROKU_DEV_APP}.git ${CIRCLE_BRANCH}
-            fi  
+            fi 
+
+  publish-to-dockerhub:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *restore-cache
+      - run: docker login -u "${DOCKER_HUB_USERNAME}" -p "${DOCKER_HUB_PASSWORD}"
+      - run: docker build -t ${IMAGE_NAME}:latest .
+      - run: 
+          name: Tag and Push to docker hub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then 
+              docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:${CIRCLE_BUILD_NUM}-production && docker push ${IMAGE_NAME}:@${CIRCLE_BUILD_NUM}-production 
+            fi
+
   
   deploy-to-aws-s3:
     executor: app-executor
@@ -314,6 +339,13 @@ workflows:
               only:
                 - develop
                 - staging
+                - master
+      - publish-to-docker-hub:
+          requires:
+            - terraform-plan-and-apply
+          filters:
+            branches:
+              only:
                 - master
       - deploy-to-aws-s3:
           requires:
