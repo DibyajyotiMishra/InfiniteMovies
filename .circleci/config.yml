@@ -362,7 +362,6 @@ workflows:
       - send-notification:
           requires:
             - deploy-to-aws-cloudfront
-            - publish-to-dockerhub
           filters:
             branches:
               only:
