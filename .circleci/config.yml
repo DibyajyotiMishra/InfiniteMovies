@@ -341,13 +341,6 @@ workflows:
                 - develop
                 - staging
                 - master
-      - publish-to-dockerhub:
-          requires:
-            - terraform-plan-and-apply
-          filters:
-            branches:
-              only:
-                - master
       - deploy-to-aws-s3:
           requires:
             - terraform-plan-and-apply
