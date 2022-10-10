@@ -22,3 +22,12 @@
 * Automatic Deployments using Circle CI and Terraform on AWS S3 served using AWS Cloudfront.
 
 Demo Link: [https://dpsx0xfuer8d.cloudfront.net](https://dpsx0xfuer8d.cloudfront.net)
+
+
+Steps to run locally:
+* Clone the repo.
+* Make sure that you have the updated version of Node JS.
+* Install yarn using the command: `npm i -g yarn`.
+* Run `yarn install`.
+* Install Terraform by downloading from [here](https://www.terraform.io/downloads).
+* Create an Account at Circle CI.
