@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable react/no-unknown-property */
 import React, {useState} from 'react';
 import {connect} from 'react-redux';
 import IStoreState from '../../redux/StoreTypes';
